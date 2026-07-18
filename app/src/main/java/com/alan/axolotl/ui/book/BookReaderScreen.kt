@@ -1,7 +1,6 @@
 package com.alan.axolotl.ui.book
 
 import android.graphics.Bitmap
-import android.graphics.pdf.PdfRenderer
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
@@ -37,6 +36,7 @@ import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +46,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -65,14 +66,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
-import com.tom_roush.pdfbox.pdmodel.PDDocument
-import com.tom_roush.pdfbox.text.PDFTextStripper
-import java.io.File
-import java.io.FileOutputStream
 import java.util.Locale
 
 private const val TAG = "BookReader"
@@ -87,13 +84,42 @@ fun BookReaderScreen(
     val context = LocalContext.current
     val displayName = fileName.removeSuffix(".pdf")
 
-    val pdfPages = remember(fileName) {
-        renderPdfPages(context, fileName)
-    }
+    val viewModel: BookReaderViewModel = viewModel(
+        factory = BookReaderViewModel.factory(fileName)
+    )
+    val uiState by viewModel.uiState.collectAsState()
 
-    val pdfTextByPage = remember(fileName) {
-        extractTextFromPdf(context, fileName)
+    when (val state = uiState) {
+        BookReaderUiState.Loading -> {
+            BookReaderLoading(displayName = displayName, onBack = onBack, modifier = modifier)
+            return
+        }
+        BookReaderUiState.Error -> {
+            BookReaderError(displayName = displayName, onBack = onBack, modifier = modifier)
+            return
+        }
+        is BookReaderUiState.Success -> {
+            BookReaderContent(
+                displayName = displayName,
+                pdfPages = state.pages,
+                pdfTextByPage = state.textByPage,
+                onBack = onBack,
+                modifier = modifier
+            )
+        }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun BookReaderContent(
+    displayName: String,
+    pdfPages: List<Bitmap>,
+    pdfTextByPage: List<String>,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
 
     var ttsReady by remember { mutableStateOf(false) }
     var isSpeaking by remember { mutableStateOf(false) }
@@ -133,12 +159,6 @@ fun BookReaderScreen(
             engine.stop()
             engine.shutdown()
             textRecognizer.close()
-        }
-    }
-
-    DisposableEffect(pdfPages) {
-        onDispose {
-            pdfPages.forEach { it.recycle() }
         }
     }
 
@@ -421,71 +441,79 @@ private fun SpeakerFab(
     }
 }
 
-private fun renderPdfPages(context: android.content.Context, fileName: String): List<Bitmap> {
-    val pages = mutableListOf<Bitmap>()
-    try {
-        val tempFile = File(context.cacheDir, fileName)
-        context.assets.open("books/$fileName").use { input ->
-            FileOutputStream(tempFile).use { output ->
-                input.copyTo(output)
-            }
-        }
-
-        val fileDescriptor = android.os.ParcelFileDescriptor.open(
-            tempFile,
-            android.os.ParcelFileDescriptor.MODE_READ_ONLY
-        )
-        val renderer = PdfRenderer(fileDescriptor)
-
-        for (i in 0 until renderer.pageCount) {
-            val page = renderer.openPage(i)
-            val renderScale = 3
-            val bitmap = Bitmap.createBitmap(
-                page.width * renderScale,
-                page.height * renderScale,
-                Bitmap.Config.ARGB_8888
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun BookReaderScaffold(
+    displayName: String,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable (PaddingValues) -> Unit
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = displayName,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             )
-            bitmap.eraseColor(android.graphics.Color.WHITE)
-            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-            pages.add(bitmap)
-            page.close()
-        }
-
-        renderer.close()
-        fileDescriptor.close()
-    } catch (e: Exception) {
-        Log.e(TAG, "Failed to render PDF pages", e)
-    }
-    return pages
+        },
+        modifier = modifier,
+        content = content
+    )
 }
 
-private fun extractTextFromPdf(context: android.content.Context, fileName: String): List<String> {
-    val textPages = mutableListOf<String>()
-    try {
-        PDFBoxResourceLoader.init(context)
-        val tempFile = File(context.cacheDir, fileName)
-        if (!tempFile.exists()) {
-            context.assets.open("books/$fileName").use { input ->
-                FileOutputStream(tempFile).use { output ->
-                    input.copyTo(output)
-                }
-            }
+@Composable
+private fun BookReaderLoading(
+    displayName: String,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    BookReaderScaffold(displayName = displayName, onBack = onBack, modifier = modifier) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
         }
-
-        val document = PDDocument.load(tempFile)
-        val stripper = PDFTextStripper()
-
-        for (i in 1..document.numberOfPages) {
-            stripper.startPage = i
-            stripper.endPage = i
-            val text = stripper.getText(document)
-            textPages.add(text)
-            Log.d(TAG, "PDFBox page $i text (${text.trim().length} chars): ${text.trim().take(80)}")
-        }
-
-        document.close()
-    } catch (e: Exception) {
-        Log.e(TAG, "Failed to extract text from PDF", e)
     }
-    return textPages
+}
+
+@Composable
+private fun BookReaderError(
+    displayName: String,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    BookReaderScaffold(displayName = displayName, onBack = onBack, modifier = modifier) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Could not open book",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+    }
 }
