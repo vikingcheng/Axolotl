@@ -337,7 +337,9 @@ fun AxolotlApp(
                 composable<BookRoute> {
                     BookScreen(
                         onBookClick = { fileName ->
-                            navController.navigate(BookReaderRoute(fileName = fileName))
+                            navController.navigate(BookReaderRoute(fileName = fileName)) {
+                                launchSingleTop = true
+                            }
                         }
                     )
                 }
