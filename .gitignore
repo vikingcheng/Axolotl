@@ -1,5 +1,6 @@
 .idea/AndroidProjectSystem.xml
 .idea/caches/deviceStreaming.xml
+.idea/deviceManager.xml
 .idea/compiler.xml
 .idea/deploymentTargetSelector.xml
 .idea/gradle.xml
@@ -8,12 +9,10 @@
 .idea/runConfigurations.xml
 .idea/vcs.xml
 .gradle/
-.DS_Store
-app/.DS_Store
-app/src/.DS_Store
-app/src/main/.DS_Store
-app/src/main/assets/.DS_Store
-app/src/main/java/.DS_Store
-app/src/main/res/.DS_Store
 .claude/settings.json
-app/.DS_Store
+
+
+# macOS
+.DS_Store
+**/.DS_Store
+.idea/inspectionProfiles/Project_Default.xml
