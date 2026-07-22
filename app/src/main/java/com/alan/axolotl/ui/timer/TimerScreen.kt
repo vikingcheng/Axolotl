@@ -34,23 +34,21 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @Composable
 fun TimerScreen(
     onTimerFinished: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: TimerViewModel = viewModel()
+    viewModel: TimerViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
     DisposableEffect(Unit) {
-        viewModel.registerReceiver(context)
+        viewModel.registerReceiver()
         onDispose { }
     }
 
@@ -166,7 +164,7 @@ fun TimerScreen(
 
         if (!uiState.isRunning) {
             Button(
-                onClick = { viewModel.startTimer(context) },
+                onClick = { viewModel.startTimer() },
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(64.dp),
@@ -189,7 +187,7 @@ fun TimerScreen(
             }
         } else {
             Button(
-                onClick = { viewModel.cancelTimer(context) },
+                onClick = { viewModel.cancelTimer() },
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(64.dp),

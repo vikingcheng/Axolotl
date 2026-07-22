@@ -2,12 +2,15 @@ package com.alan.axolotl.ui.wordsearch
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alan.axolotl.data.WordRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 enum class Direction { HORIZONTAL, VERTICAL }
 
@@ -38,7 +41,10 @@ data class WordSearchUiState(
     val categoryEmoji: String = ""
 )
 
-class WordSearchViewModel : ViewModel() {
+@HiltViewModel
+class WordSearchViewModel @Inject constructor(
+    private val wordRepository: WordRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WordSearchUiState())
     val uiState: StateFlow<WordSearchUiState> = _uiState.asStateFlow()
@@ -50,7 +56,7 @@ class WordSearchViewModel : ViewModel() {
     }
 
     fun generateNewPuzzle() {
-        val allWords = wordCategories.flatMap { it.words }.shuffled()
+        val allWords = wordRepository.getCategories().flatMap { it.words }.shuffled()
         val selectedWords = allWords.take(5)
 
         val (grid, placed) = generateGrid(selectedWords)

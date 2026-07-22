@@ -53,13 +53,13 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @Composable
 fun LockScreen(
     onUnlocked: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LockViewModel = viewModel()
+    viewModel: LockViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current

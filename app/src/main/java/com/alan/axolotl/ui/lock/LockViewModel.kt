@@ -1,10 +1,12 @@
 package com.alan.axolotl.ui.lock
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 import kotlin.random.Random
 
 data class LockUiState(
@@ -14,7 +16,8 @@ data class LockUiState(
     val isWrongAnswer: Boolean = false
 )
 
-class LockViewModel : ViewModel() {
+@HiltViewModel
+class LockViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(LockUiState())
     val uiState: StateFlow<LockUiState> = _uiState.asStateFlow()

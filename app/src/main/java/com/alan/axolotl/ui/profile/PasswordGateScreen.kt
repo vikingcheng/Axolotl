@@ -23,8 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,15 +33,14 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun PasswordGateScreen(
     onPasswordCorrect: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: PasswordGateViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     var enteredPassword by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
 
     fun attemptUnlock() {
-        val storedPassword = getTimerPassword(context)
-        if (enteredPassword == storedPassword) {
+        if (viewModel.isPasswordCorrect(enteredPassword)) {
             showError = false
             onPasswordCorrect()
         } else {

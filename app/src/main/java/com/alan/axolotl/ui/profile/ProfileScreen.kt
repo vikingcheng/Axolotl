@@ -1,6 +1,5 @@
 package com.alan.axolotl.ui.profile
 
-import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,35 +13,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-private const val PREFS_NAME = "axolotl_prefs"
-private const val KEY_TIMER_PASSWORD = "timer_password"
-private const val DEFAULT_PASSWORD = "8922"
-
-fun getTimerPassword(context: Context): String {
-    val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-    return prefs.getString(KEY_TIMER_PASSWORD, DEFAULT_PASSWORD) ?: DEFAULT_PASSWORD
-}
-
-fun setTimerPassword(context: Context, password: String) {
-    val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-    prefs.edit().putString(KEY_TIMER_PASSWORD, password).apply()
-}
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    var currentPassword by remember { mutableStateOf(getTimerPassword(context)) }
+fun ProfileScreen(
+    modifier: Modifier = Modifier,
+    viewModel: ProfileViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
     var newPassword by remember { mutableStateOf("") }
     var statusMessage by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
@@ -65,7 +53,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedTextField(
-            value = currentPassword,
+            value = uiState.currentPassword,
             onValueChange = {},
             readOnly = true,
             label = { Text("Current Password") },
@@ -98,9 +86,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 
         Button(
             onClick = {
-                if (newPassword.length == 4) {
-                    setTimerPassword(context, newPassword)
-                    currentPassword = newPassword
+                if (viewModel.savePassword(newPassword)) {
                     newPassword = ""
                     statusMessage = "Password updated!"
                     isError = false

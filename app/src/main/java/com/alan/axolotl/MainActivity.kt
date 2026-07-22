@@ -8,9 +8,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.alan.axolotl.service.TimerService
 import com.alan.axolotl.ui.theme.AxolotlTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val _showLock = MutableStateFlow(false)

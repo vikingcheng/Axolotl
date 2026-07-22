@@ -6,10 +6,13 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.lifecycle.ViewModel
 import com.alan.axolotl.service.TimerService
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 data class TimerUiState(
     val selectedMinutes: Int = 5,
@@ -18,13 +21,15 @@ data class TimerUiState(
     val isFinished: Boolean = false
 )
 
-class TimerViewModel : ViewModel() {
+@HiltViewModel
+class TimerViewModel @Inject constructor(
+    @ApplicationContext private val context: Context
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TimerUiState())
     val uiState: StateFlow<TimerUiState> = _uiState.asStateFlow()
 
     private var receiver: BroadcastReceiver? = null
-    private var registeredContext: Context? = null
 
     fun setMinutes(minutes: Int) {
         if (!_uiState.value.isRunning) {
@@ -40,7 +45,7 @@ class TimerViewModel : ViewModel() {
         setMinutes(_uiState.value.selectedMinutes - 1)
     }
 
-    fun startTimer(context: Context) {
+    fun startTimer() {
         val minutes = _uiState.value.selectedMinutes
         _uiState.update {
             it.copy(
@@ -49,20 +54,19 @@ class TimerViewModel : ViewModel() {
                 remainingSeconds = minutes * 60L
             )
         }
-        registerReceiver(context)
+        registerReceiver()
         TimerService.startTimer(context, minutes)
     }
 
-    fun cancelTimer(context: Context) {
+    fun cancelTimer() {
         TimerService.stopTimer(context)
         _uiState.update {
             it.copy(isRunning = false, isFinished = false, remainingSeconds = 0)
         }
     }
 
-    fun registerReceiver(context: Context) {
+    fun registerReceiver() {
         if (receiver != null) return
-        val appContext = context.applicationContext
         receiver = object : BroadcastReceiver() {
             override fun onReceive(ctx: Context?, intent: Intent?) {
                 if (intent?.action == TimerService.ACTION_TICK) {
@@ -78,12 +82,11 @@ class TimerViewModel : ViewModel() {
                 }
             }
         }
-        appContext.registerReceiver(
+        context.registerReceiver(
             receiver,
             IntentFilter(TimerService.ACTION_TICK),
             Context.RECEIVER_NOT_EXPORTED
         )
-        registeredContext = appContext
     }
 
     fun resetAfterLock() {
@@ -92,8 +95,7 @@ class TimerViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        receiver?.let { registeredContext?.unregisterReceiver(it) }
+        receiver?.let { context.unregisterReceiver(it) }
         receiver = null
-        registeredContext = null
     }
 }

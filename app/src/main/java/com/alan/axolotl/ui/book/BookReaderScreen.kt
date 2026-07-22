@@ -66,7 +66,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -84,9 +84,7 @@ fun BookReaderScreen(
     val context = LocalContext.current
     val displayName = fileName.removeSuffix(".pdf")
 
-    val viewModel: BookReaderViewModel = viewModel(
-        factory = BookReaderViewModel.factory(fileName)
-    )
+    val viewModel: BookReaderViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
     when (val state = uiState) {

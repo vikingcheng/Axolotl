@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 private val FoundGreen = Color(0xFF4CAF50)
 private val SelectedBlue = Color(0xFFBBDEFB)
@@ -43,7 +43,7 @@ private val GridBorder = Color(0xFFBDBDBD)
 
 @Composable
 fun WordSearchScreen(
-    viewModel: WordSearchViewModel = viewModel(),
+    viewModel: WordSearchViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()

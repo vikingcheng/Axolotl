@@ -1,18 +1,20 @@
 package com.alan.axolotl.ui.book
 
-import android.app.Application
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.navigation.toRoute
+import com.alan.axolotl.navigation.BookReaderRoute
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.text.PDFTextStripper
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
 
 private const val TAG = "BookReader"
 
@@ -33,10 +36,14 @@ sealed interface BookReaderUiState {
     data object Error : BookReaderUiState
 }
 
-class BookReaderViewModel(
-    application: Application,
-    private val fileName: String
-) : AndroidViewModel(application) {
+@HiltViewModel
+class BookReaderViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
+
+    // The file name arrives as the type-safe navigation argument.
+    private val fileName: String = savedStateHandle.toRoute<BookReaderRoute>().fileName
 
     private val _uiState = MutableStateFlow<BookReaderUiState>(BookReaderUiState.Loading)
     val uiState: StateFlow<BookReaderUiState> = _uiState.asStateFlow()
@@ -48,7 +55,6 @@ class BookReaderViewModel(
     private fun loadBook() {
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
-                val context = getApplication<Application>()
                 // Extract the asset to a cache file exactly once, then reuse it for
                 // both rendering and text extraction to avoid a write race.
                 val tempFile = File(context.cacheDir, fileName)
@@ -67,7 +73,7 @@ class BookReaderViewModel(
                 if (pages.isEmpty()) {
                     return@withContext BookReaderUiState.Error
                 }
-                val text = extractTextFromPdf(context, tempFile)
+                val text = extractTextFromPdf(tempFile)
                 BookReaderUiState.Success(pages, text)
             }
             _uiState.value = result
@@ -105,7 +111,7 @@ class BookReaderViewModel(
         return pages
     }
 
-    private fun extractTextFromPdf(context: android.content.Context, file: File): List<String> {
+    private fun extractTextFromPdf(file: File): List<String> {
         val textPages = mutableListOf<String>()
         try {
             PDFBoxResourceLoader.init(context)
@@ -130,19 +136,5 @@ class BookReaderViewModel(
     override fun onCleared() {
         super.onCleared()
         (_uiState.value as? BookReaderUiState.Success)?.pages?.forEach { it.recycle() }
-    }
-
-    companion object {
-        fun factory(fileName: String): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(
-                    modelClass: Class<T>,
-                    extras: CreationExtras
-                ): T {
-                    val application = extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]!!
-                    return BookReaderViewModel(application, fileName) as T
-                }
-            }
     }
 }

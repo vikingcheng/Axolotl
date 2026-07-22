@@ -1,18 +1,22 @@
 package com.alan.axolotl.ui.read
 
-import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import com.alan.axolotl.data.SentenceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Locale
+import javax.inject.Inject
 
 data class WordComparison(
     val word: String,
@@ -37,7 +41,11 @@ data class ReadUiState(
     val speechAvailable: Boolean = true
 )
 
-class ReadViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class ReadViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val sentenceRepository: SentenceRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReadUiState())
     val uiState: StateFlow<ReadUiState> = _uiState.asStateFlow()
@@ -47,16 +55,16 @@ class ReadViewModel(application: Application) : AndroidViewModel(application) {
     private var ttsReady = false
 
     init {
-        tts = TextToSpeech(application) { status ->
+        tts = TextToSpeech(context) { status ->
             ttsReady = status == TextToSpeech.SUCCESS
             tts?.language = Locale.US
         }
 
-        val available = SpeechRecognizer.isRecognitionAvailable(application)
+        val available = SpeechRecognizer.isRecognitionAvailable(context)
         _uiState.update { it.copy(speechAvailable = available) }
 
         if (available) {
-            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(application)
+            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
             speechRecognizer?.setRecognitionListener(createRecognitionListener())
         }
 
@@ -65,7 +73,8 @@ class ReadViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun loadSentence() {
         val state = _uiState.value
-        val level = sentenceLevels.find { it.difficulty == state.difficulty } ?: sentenceLevels[0]
+        val levels = sentenceRepository.getLevels()
+        val level = levels.find { it.difficulty == state.difficulty } ?: levels[0]
         val sentence = level.sentences[state.sentenceIndex % level.sentences.size]
         val words = sentence.split(" ")
 
@@ -194,7 +203,8 @@ class ReadViewModel(application: Application) : AndroidViewModel(application) {
 
     fun nextSentence() {
         val state = _uiState.value
-        val level = sentenceLevels.find { it.difficulty == state.difficulty } ?: sentenceLevels[0]
+        val levels = sentenceRepository.getLevels()
+        val level = levels.find { it.difficulty == state.difficulty } ?: levels[0]
         val nextIndex = (state.sentenceIndex + 1) % level.sentences.size
 
         _uiState.update { it.copy(sentenceIndex = nextIndex) }

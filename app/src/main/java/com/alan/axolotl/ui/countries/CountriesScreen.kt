@@ -25,14 +25,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 private val CorrectGreen = Color(0xFF4CAF50)
 private val WrongRed = Color(0xFFE53935)
 
 @Composable
 fun CountriesScreen(
-    viewModel: CountriesViewModel = viewModel(),
+    viewModel: CountriesViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()

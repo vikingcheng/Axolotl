@@ -1,10 +1,13 @@
 package com.alan.axolotl.ui.countries
 
 import androidx.lifecycle.ViewModel
+import com.alan.axolotl.data.CountryRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 data class AnswerOption(
     val country: Country,
@@ -18,7 +21,10 @@ data class CountriesUiState(
     val answered: Boolean = false
 )
 
-class CountriesViewModel : ViewModel() {
+@HiltViewModel
+class CountriesViewModel @Inject constructor(
+    private val countryRepository: CountryRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CountriesUiState())
     val uiState: StateFlow<CountriesUiState> = _uiState.asStateFlow()
@@ -30,11 +36,12 @@ class CountriesViewModel : ViewModel() {
     }
 
     fun generateQuestion() {
-        val available = allCountries.filter { it.name != lastCountryName }
+        val countries = countryRepository.getCountries()
+        val available = countries.filter { it.name != lastCountryName }
         val correct = available.random()
         lastCountryName = correct.name
 
-        val distractors = allCountries
+        val distractors = countries
             .filter { it.name != correct.name }
             .shuffled()
             .take(3)
