@@ -2,11 +2,13 @@ package com.alan.axolotl.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.alan.axolotl.data.BookRepository
 import com.alan.axolotl.data.CountryRepository
 import com.alan.axolotl.data.DefaultCountryRepository
 import com.alan.axolotl.data.DefaultSentenceRepository
 import com.alan.axolotl.data.DefaultSettingsRepository
 import com.alan.axolotl.data.DefaultWordRepository
+import com.alan.axolotl.data.PdfBookRepository
 import com.alan.axolotl.data.SentenceRepository
 import com.alan.axolotl.data.SettingsRepository
 import com.alan.axolotl.data.WordRepository
@@ -46,6 +48,10 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindSettingsRepository(impl: DefaultSettingsRepository): SettingsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindBookRepository(impl: PdfBookRepository): BookRepository
 
     companion object {
         @Provides
