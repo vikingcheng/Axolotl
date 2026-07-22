@@ -57,6 +57,19 @@ class BookReaderViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Releases the rendered page bitmaps once this ViewModel is destroyed for good.
+     *
+     * Pages are rendered at 3x scale in [Bitmap.Config.ARGB_8888], so a single book can
+     * hold hundreds of megabytes of native pixel memory. On API 26+ that memory is
+     * reclaimed by the garbage collector eventually, but "eventually" is not good enough
+     * here: opening a second book before a collection runs would double the peak
+     * footprint. [Bitmap.recycle] frees it deterministically instead.
+     *
+     * [onCleared] is the right hook because it fires only when the ViewModel's scope is
+     * gone for good — notably *not* on configuration changes, where the bitmaps must
+     * survive so the recreated UI can keep drawing them from [uiState].
+     */
     override fun onCleared() {
         super.onCleared()
         (_uiState.value as? BookReaderUiState.Success)?.pages?.forEach { it.recycle() }
