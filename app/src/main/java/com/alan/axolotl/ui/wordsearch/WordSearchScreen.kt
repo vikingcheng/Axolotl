@@ -26,6 +26,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import com.alan.axolotl.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -129,7 +131,7 @@ fun WordSearchScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "\uD83D\uDD0D Find the Words!",
+                text = stringResource(R.string.word_search_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -146,7 +148,7 @@ fun WordSearchScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Words to find:",
+                text = stringResource(R.string.word_search_words_to_find),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -195,7 +197,7 @@ fun WordSearchScreen(
             if (uiState.selectedCells.isNotEmpty()) {
                 TextButton(onClick = { viewModel.clearSelection() }) {
                     Text(
-                        text = "\u274C Clear Selection",
+                        text = stringResource(R.string.word_search_clear_selection),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.error
                     )
@@ -205,7 +207,7 @@ fun WordSearchScreen(
             if (uiState.foundWords.size == uiState.words.size && uiState.words.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "\uD83C\uDF89 Great job, Alan! All words found!",
+                    text = stringResource(R.string.word_search_all_found),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = FoundGreen
@@ -228,7 +230,7 @@ fun WordSearchScreen(
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
             ) {
                 Text(
-                    text = "Next \u27A1\uFE0F",
+                    text = stringResource(R.string.word_search_next),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold
                 )

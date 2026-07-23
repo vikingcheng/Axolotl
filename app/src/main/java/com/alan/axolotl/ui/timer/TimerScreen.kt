@@ -34,10 +34,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.alan.axolotl.R
 
 @Composable
 fun TimerScreen(
@@ -68,7 +70,7 @@ fun TimerScreen(
         AnimatedVisibility(visible = !uiState.isRunning) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "How many minutes?",
+                    text = stringResource(R.string.timer_how_many_minutes),
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -87,7 +89,7 @@ fun TimerScreen(
                     ) {
                         Icon(
                             Icons.Filled.Remove,
-                            contentDescription = "Decrease",
+                            contentDescription = stringResource(R.string.timer_decrease),
                             modifier = Modifier.size(32.dp)
                         )
                     }
@@ -111,14 +113,14 @@ fun TimerScreen(
                     ) {
                         Icon(
                             Icons.Filled.Add,
-                            contentDescription = "Increase",
+                            contentDescription = stringResource(R.string.timer_increase),
                             modifier = Modifier.size(32.dp)
                         )
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "minutes",
+                    text = stringResource(R.string.timer_minutes),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -151,7 +153,7 @@ fun TimerScreen(
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = "remaining",
+                            text = stringResource(R.string.timer_remaining),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -181,7 +183,7 @@ fun TimerScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Start!",
+                    text = stringResource(R.string.timer_start),
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
@@ -204,7 +206,7 @@ fun TimerScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Stop",
+                    text = stringResource(R.string.timer_stop),
                     style = MaterialTheme.typography.headlineSmall
                 )
             }

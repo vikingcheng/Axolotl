@@ -28,11 +28,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.alan.axolotl.R
 
 private val CorrectGreen = Color(0xFF4CAF50)
 private val WrongRed = Color(0xFFE53935)
@@ -43,6 +45,12 @@ fun CountriesScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val questionText = stringResource(
+        when (uiState.questionType) {
+            QuestionType.FLAG_TO_COUNTRY -> R.string.countries_question_flag
+            QuestionType.COUNTRY_TO_CONTINENT -> R.string.countries_question_continent
+        }
+    )
 
     Box(modifier = modifier.fillMaxSize()) {
         ScoreBoard(
@@ -61,14 +69,14 @@ fun CountriesScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = uiState.questionText,
+                text = questionText,
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.clickable(
-                    onClickLabel = "Say the question"
-                ) { viewModel.speak(uiState.questionText) }
+                    onClickLabel = stringResource(R.string.countries_say_question)
+                ) { viewModel.speak(questionText) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -105,7 +113,7 @@ fun CountriesScreen(
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
                 ) {
                     Text(
-                        text = "Next ➡️",
+                        text = stringResource(R.string.countries_next),
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -130,12 +138,12 @@ private fun ScoreBoard(
         horizontalAlignment = Alignment.Start
     ) {
         Text(
-            text = "Answered: $answeredCount",
+            text = stringResource(R.string.countries_answered, answeredCount),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
-            text = "Correct: $correctCount",
+            text = stringResource(R.string.countries_correct, correctCount),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -151,7 +159,7 @@ private fun ScoreBoard(
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = "Reset",
+                text = stringResource(R.string.countries_reset),
                 style = MaterialTheme.typography.titleMedium
             )
         }
@@ -184,7 +192,7 @@ private fun QuestionPrompt(
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             modifier = Modifier.clickable(
-                onClickLabel = "Say this country name"
+                onClickLabel = stringResource(R.string.countries_say_country)
             ) { onPromptTapped() }
         )
     }

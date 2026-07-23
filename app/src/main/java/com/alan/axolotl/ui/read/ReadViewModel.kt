@@ -8,6 +8,7 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
 import androidx.lifecycle.ViewModel
+import com.alan.axolotl.R
 import com.alan.axolotl.data.SentenceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -141,14 +142,16 @@ class ReadViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     isListening = false,
-                    errorMessage = when (error) {
-                        SpeechRecognizer.ERROR_NO_MATCH -> "I didn't hear anything. Try again!"
-                        SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "I didn't hear anything. Try again!"
-                        SpeechRecognizer.ERROR_AUDIO -> "Microphone problem. Try again!"
-                        SpeechRecognizer.ERROR_NETWORK,
-                        SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Network issue. Try again!"
-                        else -> "Something went wrong. Try again!"
-                    }
+                    errorMessage = context.getString(
+                        when (error) {
+                            SpeechRecognizer.ERROR_NO_MATCH,
+                            SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> R.string.read_error_no_match
+                            SpeechRecognizer.ERROR_AUDIO -> R.string.read_error_audio
+                            SpeechRecognizer.ERROR_NETWORK,
+                            SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> R.string.read_error_network
+                            else -> R.string.read_error_generic
+                        }
+                    )
                 )
             }
         }

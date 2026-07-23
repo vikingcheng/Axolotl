@@ -65,8 +65,10 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.alan.axolotl.R
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -172,7 +174,7 @@ private fun BookReaderContent(
 
     fun speakPage(pageIndex: Int) {
         if (!ttsReady) {
-            Toast.makeText(context, "Text-to-speech is still loading…", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.book_reader_tts_loading), Toast.LENGTH_SHORT).show()
             Log.w(TAG, "speakPage called but TTS not ready yet")
             return
         }
@@ -189,7 +191,7 @@ private fun BookReaderContent(
         val cachedOcr = ocrTextCache[pageIndex]
         if (cachedOcr != null) {
             if (cachedOcr.isBlank()) {
-                Toast.makeText(context, "No readable text found on this page", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.book_reader_no_text), Toast.LENGTH_SHORT).show()
             } else {
                 doSpeak(pageIndex, cachedOcr)
             }
@@ -198,11 +200,11 @@ private fun BookReaderContent(
 
         val bitmap = pdfPages.getOrNull(pageIndex)
         if (bitmap == null) {
-            Toast.makeText(context, "Page not available", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.book_reader_page_unavailable), Toast.LENGTH_SHORT).show()
             return
         }
 
-        Toast.makeText(context, "Scanning page for text…", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.book_reader_scanning), Toast.LENGTH_SHORT).show()
 
         val image = InputImage.fromBitmap(bitmap, 0)
         textRecognizer.process(image)
@@ -211,7 +213,7 @@ private fun BookReaderContent(
                 ocrTextCache[pageIndex] = ocrText
                 Log.d(TAG, "Page $pageIndex OCR result: ${ocrText.take(80)}…")
                 if (ocrText.isBlank()) {
-                    Toast.makeText(context, "No readable text found on this page", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.book_reader_no_text), Toast.LENGTH_SHORT).show()
                 } else {
                     doSpeak(pageIndex, ocrText)
                 }
@@ -219,7 +221,7 @@ private fun BookReaderContent(
             .addOnFailureListener { e ->
                 Log.e(TAG, "OCR failed for page $pageIndex", e)
                 ocrTextCache[pageIndex] = ""
-                Toast.makeText(context, "Could not read text from this page", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.book_reader_read_failed), Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -256,7 +258,7 @@ private fun BookReaderContent(
                     }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.book_reader_back)
                         )
                     }
                 },
@@ -266,12 +268,12 @@ private fun BookReaderContent(
                             scale = (scale - 0.25f).coerceIn(0.5f, 5f)
                             if (scale <= 1f) offset = Offset.Zero
                         }) {
-                            Icon(Icons.Filled.Remove, contentDescription = "Zoom out")
+                            Icon(Icons.Filled.Remove, contentDescription = stringResource(R.string.book_reader_zoom_out))
                         }
                         IconButton(onClick = {
                             scale = (scale + 0.25f).coerceIn(0.5f, 5f)
                         }) {
-                            Icon(Icons.Filled.Add, contentDescription = "Zoom in")
+                            Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.book_reader_zoom_in))
                         }
                     }
                 },
@@ -305,7 +307,7 @@ private fun BookReaderContent(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Could not open book",
+                    text = stringResource(R.string.book_reader_could_not_open),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.error
                 )
@@ -353,7 +355,7 @@ private fun BookReaderContent(
                         Box {
                             Image(
                                 bitmap = bitmap.asImageBitmap(),
-                                contentDescription = "Book page ${index + 1}",
+                                contentDescription = stringResource(R.string.book_reader_page_description, index + 1),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .graphicsLayer {
@@ -386,7 +388,7 @@ private fun BookReaderContent(
                                 ) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.VolumeUp,
-                                        contentDescription = "Speaking this page",
+                                        contentDescription = stringResource(R.string.book_reader_speaking_page),
                                         tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(20.dp)
                                     )
@@ -433,7 +435,7 @@ private fun SpeakerFab(
     ) {
         Icon(
             imageVector = if (isSpeaking) Icons.Filled.Stop else Icons.AutoMirrored.Filled.VolumeUp,
-            contentDescription = if (isSpeaking) "Stop reading" else "Read this page",
+            contentDescription = if (isSpeaking) stringResource(R.string.book_reader_stop_reading) else stringResource(R.string.book_reader_read_this_page),
             modifier = Modifier.size(36.dp)
         )
     }
@@ -461,7 +463,7 @@ private fun BookReaderScaffold(
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.book_reader_back)
                         )
                     }
                 },
@@ -508,7 +510,7 @@ private fun BookReaderError(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Could not open book",
+                text = stringResource(R.string.book_reader_could_not_open),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.error
             )

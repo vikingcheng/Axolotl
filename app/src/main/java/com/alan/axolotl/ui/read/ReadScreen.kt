@@ -54,12 +54,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.alan.axolotl.R
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -115,7 +117,7 @@ fun ReadScreen(
 
         if (!uiState.showResult) {
             Text(
-                text = "Tap a word to hear it \uD83D\uDD0A",
+                text = stringResource(R.string.read_tap_word_hint),
                 fontSize = 20.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -131,7 +133,7 @@ fun ReadScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Speech recognition is not available on this device.",
+                    text = stringResource(R.string.read_speech_unavailable),
                     modifier = Modifier.padding(16.dp),
                     color = MaterialTheme.colorScheme.onErrorContainer,
                     textAlign = TextAlign.Center
@@ -143,7 +145,7 @@ fun ReadScreen(
             ) {
                 Icon(Icons.Filled.Mic, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Allow Microphone")
+                Text(stringResource(R.string.read_allow_microphone))
             }
         } else if (uiState.showResult) {
             ResultDisplay(
@@ -170,7 +172,7 @@ fun ReadScreen(
             if (uiState.isListening) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Listening... \uD83D\uDC42",
+                    text = stringResource(R.string.read_listening),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary
@@ -212,7 +214,7 @@ private fun DifficultySelector(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Level:",
+            text = stringResource(R.string.read_level),
             style = MaterialTheme.typography.titleMedium
         )
         Difficulty.entries.forEach { difficulty ->
@@ -221,7 +223,7 @@ private fun DifficultySelector(
                 onClick = { onDifficultyChange(difficulty) },
                 label = {
                     Text(
-                        text = difficulty.label,
+                        text = stringResource(difficulty.labelRes),
                         style = MaterialTheme.typography.labelLarge
                     )
                 }
@@ -361,7 +363,7 @@ private fun MicrophoneButton(
         ) {
             Icon(
                 imageVector = Icons.Filled.Mic,
-                contentDescription = if (isListening) "Stop listening" else "Start reading",
+                contentDescription = if (isListening) stringResource(R.string.read_stop_listening) else stringResource(R.string.read_start_reading),
                 modifier = Modifier.size(36.dp)
             )
         }
@@ -386,7 +388,7 @@ private fun ResultDisplay(
     ) {
         if (wordComparisons.isNotEmpty()) {
             Text(
-                text = "What I heard:",
+                text = stringResource(R.string.read_what_i_heard),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -425,7 +427,7 @@ private fun ResultDisplay(
             }
 
             Text(
-                text = "$correctWordCount / $totalWordCount words correct",
+                text = stringResource(R.string.read_words_correct, correctWordCount, totalWordCount),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -449,14 +451,16 @@ private fun ResultDisplay(
             }
         }
 
-        val message = when {
-            starsEarned >= 5 -> "Amazing! Perfect! \uD83C\uDF1F"
-            starsEarned >= 4 -> "Great job! \uD83C\uDF89"
-            starsEarned >= 3 -> "Good reading! \uD83D\uDC4D"
-            starsEarned >= 2 -> "Nice try! Keep going! \uD83D\uDCAA"
-            starsEarned >= 1 -> "Good effort! Try again? \uD83D\uDE0A"
-            else -> "Let's try again! You can do it! \uD83D\uDC4B"
-        }
+        val message = stringResource(
+            when {
+                starsEarned >= 5 -> R.string.read_result_amazing
+                starsEarned >= 4 -> R.string.read_result_great
+                starsEarned >= 3 -> R.string.read_result_good
+                starsEarned >= 2 -> R.string.read_result_nice
+                starsEarned >= 1 -> R.string.read_result_effort
+                else -> R.string.read_result_try_again
+            }
+        )
 
         Text(
             text = message,
@@ -480,11 +484,11 @@ private fun ResultDisplay(
             ) {
                 Icon(Icons.Filled.Replay, contentDescription = null)
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Try Again", fontSize = 18.sp)
+                Text(stringResource(R.string.read_try_again), fontSize = 18.sp)
             }
 
             Button(onClick = onNext) {
-                Text("Next", fontSize = 18.sp)
+                Text(stringResource(R.string.read_next), fontSize = 18.sp)
                 Spacer(modifier = Modifier.width(6.dp))
                 Icon(Icons.Filled.NavigateNext, contentDescription = null)
             }

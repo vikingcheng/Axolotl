@@ -20,10 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.alan.axolotl.R
 
 @Composable
 fun ProfileScreen(
@@ -35,6 +37,9 @@ fun ProfileScreen(
     var statusMessage by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
 
+    val updatedMessage = stringResource(R.string.profile_password_updated)
+    val invalidMessage = stringResource(R.string.profile_password_invalid)
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -45,7 +50,7 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Profile",
+            text = stringResource(R.string.profile_title),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary
         )
@@ -56,7 +61,7 @@ fun ProfileScreen(
             value = uiState.currentPassword,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Current Password") },
+            label = { Text(stringResource(R.string.profile_current_password)) },
             textStyle = MaterialTheme.typography.headlineSmall.copy(
                 letterSpacing = 8.sp
             ),
@@ -73,7 +78,7 @@ fun ProfileScreen(
                     newPassword = input
                 }
             },
-            label = { Text("New Password (4 digits)") },
+            label = { Text(stringResource(R.string.profile_new_password)) },
             textStyle = MaterialTheme.typography.headlineSmall.copy(
                 letterSpacing = 8.sp
             ),
@@ -88,17 +93,17 @@ fun ProfileScreen(
             onClick = {
                 if (viewModel.savePassword(newPassword)) {
                     newPassword = ""
-                    statusMessage = "Password updated!"
+                    statusMessage = updatedMessage
                     isError = false
                 } else {
-                    statusMessage = "Password must be exactly 4 digits"
+                    statusMessage = invalidMessage
                     isError = true
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Save",
+                text = stringResource(R.string.profile_save),
                 style = MaterialTheme.typography.titleMedium
             )
         }

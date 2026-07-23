@@ -28,7 +28,6 @@ data class AnswerOption(
 
 data class CountriesUiState(
     val questionType: QuestionType = QuestionType.FLAG_TO_COUNTRY,
-    val questionText: String = "",
     /** Big flag shown for [QuestionType.FLAG_TO_COUNTRY]. */
     val promptFlag: String = "",
     /** Country name shown for [QuestionType.COUNTRY_TO_CONTINENT]. */
@@ -76,7 +75,6 @@ class CountriesViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         questionType = QuestionType.FLAG_TO_COUNTRY,
-                        questionText = "Which country is this?",
                         promptFlag = correct.flagEmoji,
                         promptName = "",
                         options = options,
@@ -99,7 +97,6 @@ class CountriesViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         questionType = QuestionType.COUNTRY_TO_CONTINENT,
-                        questionText = "Which continent is this country in?",
                         promptFlag = "",
                         promptName = correct.name,
                         options = options,

@@ -1,5 +1,6 @@
 package com.alan.axolotl.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.outlined.MenuBook
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.alan.axolotl.R
 
 /** Which Material colour role a feature's Home-screen tile is painted with. */
 enum class DestinationAccent { PRIMARY, SECONDARY, TERTIARY }
@@ -26,49 +28,49 @@ enum class DestinationAccent { PRIMARY, SECONDARY, TERTIARY }
  * means adding one entry here (plus its `composable<Route>` in the NavHost).
  */
 enum class TopLevelDestination(
-    val label: String,
+    @StringRes val labelRes: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
     val route: Any,
     val accent: DestinationAccent
 ) {
     HOME(
-        label = "Home",
+        labelRes = R.string.destination_home,
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home,
         route = HomeRoute,
         accent = DestinationAccent.PRIMARY
     ),
     TIMER(
-        label = "Timer",
+        labelRes = R.string.destination_timer,
         selectedIcon = Icons.Filled.Timer,
         unselectedIcon = Icons.Outlined.Timer,
         route = TimerRoute,
         accent = DestinationAccent.PRIMARY
     ),
     BOOK(
-        label = "Books",
+        labelRes = R.string.destination_books,
         selectedIcon = Icons.AutoMirrored.Filled.MenuBook,
         unselectedIcon = Icons.AutoMirrored.Outlined.MenuBook,
         route = BookRoute,
         accent = DestinationAccent.SECONDARY
     ),
     COUNTRIES(
-        label = "Countries",
+        labelRes = R.string.destination_countries,
         selectedIcon = Icons.Filled.Public,
         unselectedIcon = Icons.Outlined.Public,
         route = CountriesRoute,
         accent = DestinationAccent.TERTIARY
     ),
     WORD_SEARCH(
-        label = "Word Search",
+        labelRes = R.string.destination_word_search,
         selectedIcon = Icons.Filled.GridOn,
         unselectedIcon = Icons.Outlined.GridOn,
         route = WordSearchRoute,
         accent = DestinationAccent.PRIMARY
     ),
     READ(
-        label = "Read",
+        labelRes = R.string.destination_read,
         selectedIcon = Icons.Filled.Mic,
         unselectedIcon = Icons.Outlined.Mic,
         route = ReadRoute,

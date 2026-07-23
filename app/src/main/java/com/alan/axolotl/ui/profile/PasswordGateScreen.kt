@@ -23,8 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.alan.axolotl.R
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -56,7 +58,7 @@ fun PasswordGateScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Enter Password",
+            text = stringResource(R.string.password_gate_title),
             fontSize = 36.sp,
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary,
@@ -101,7 +103,7 @@ fun PasswordGateScreen(
                 modifier = Modifier.height(56.dp)
             ) {
                 Text(
-                    text = "Enter",
+                    text = stringResource(R.string.password_gate_enter),
                     fontSize = 20.sp
                 )
             }
@@ -111,7 +113,7 @@ fun PasswordGateScreen(
 
         if (showError) {
             Text(
-                text = "Password is wrong",
+                text = stringResource(R.string.password_gate_wrong),
                 color = Color.Red,
                 fontSize = 24.sp,
                 style = MaterialTheme.typography.titleLarge,

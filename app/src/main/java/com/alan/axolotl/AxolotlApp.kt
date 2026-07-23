@@ -30,6 +30,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -126,7 +127,7 @@ fun AxolotlApp(
         drawerContent = {
             ModalDrawerSheet {
                 Text(
-                    text = "\uD83E\uDD8E Axolotl",
+                    text = "\uD83E\uDD8E " + stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(28.dp)
@@ -137,12 +138,12 @@ fun AxolotlApp(
                         icon = {
                             Icon(
                                 imageVector = if (selected) destination.selectedIcon else destination.unselectedIcon,
-                                contentDescription = destination.label
+                                contentDescription = stringResource(destination.labelRes)
                             )
                         },
                         label = {
                             Text(
-                                text = destination.label,
+                                text = stringResource(destination.labelRes),
                                 style = MaterialTheme.typography.titleMedium
                             )
                         },
@@ -162,12 +163,12 @@ fun AxolotlApp(
                     icon = {
                         Icon(
                             imageVector = Icons.Filled.Person,
-                            contentDescription = "Profile"
+                            contentDescription = stringResource(R.string.drawer_profile)
                         )
                     },
                     label = {
                         Text(
-                            text = "Profile",
+                            text = stringResource(R.string.drawer_profile),
                             style = MaterialTheme.typography.titleMedium
                         )
                     },
@@ -191,7 +192,7 @@ fun AxolotlApp(
                     TopAppBar(
                         title = {
                             Text(
-                                text = "Axolotl",
+                                text = stringResource(R.string.app_name),
                                 style = MaterialTheme.typography.titleLarge
                             )
                         },
@@ -199,7 +200,7 @@ fun AxolotlApp(
                             IconButton(onClick = {
                                 scope.launch { drawerState.open() }
                             }) {
-                                Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                                Icon(Icons.Filled.Menu, contentDescription = stringResource(R.string.menu))
                             }
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
@@ -228,10 +229,10 @@ fun AxolotlApp(
                                 icon = {
                                     Icon(
                                         imageVector = if (selected) destination.selectedIcon else destination.unselectedIcon,
-                                        contentDescription = destination.label
+                                        contentDescription = stringResource(destination.labelRes)
                                     )
                                 },
-                                label = { Text(destination.label) }
+                                label = { Text(stringResource(destination.labelRes)) }
                             )
                         }
                     }

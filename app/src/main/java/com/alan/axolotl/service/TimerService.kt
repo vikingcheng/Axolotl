@@ -103,8 +103,8 @@ class TimerService : Service() {
         )
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Axolotl Timer")
-            .setContentText("Time remaining: $timeText")
+            .setContentTitle(getString(R.string.timer_notification_title))
+            .setContentText(getString(R.string.timer_notification_text, timeText))
             .setSmallIcon(R.mipmap.ic_launcher)
             .setOngoing(true)
             .setSilent(true)
@@ -116,10 +116,10 @@ class TimerService : Service() {
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
             CHANNEL_ID,
-            "Timer",
+            getString(R.string.timer_channel_name),
             NotificationManager.IMPORTANCE_LOW
         ).apply {
-            description = "Shows countdown timer progress"
+            description = getString(R.string.timer_channel_description)
         }
         val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         nm.createNotificationChannel(channel)

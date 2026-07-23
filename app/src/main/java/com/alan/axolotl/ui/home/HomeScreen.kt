@@ -22,8 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.alan.axolotl.R
 import com.alan.axolotl.navigation.DestinationAccent
 import com.alan.axolotl.navigation.TopLevelDestination
 
@@ -47,13 +49,13 @@ fun HomeScreen(
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "Hi Alan!",
+            text = stringResource(R.string.home_greeting),
             style = MaterialTheme.typography.displayMedium,
             color = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "What do you want to do today?",
+            text = stringResource(R.string.home_prompt),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -105,7 +107,7 @@ private fun FeatureTile(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = feature.label,
+                text = stringResource(feature.labelRes),
                 style = MaterialTheme.typography.labelLarge,
                 textAlign = TextAlign.Center
             )

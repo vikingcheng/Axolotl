@@ -1,9 +1,12 @@
 package com.alan.axolotl.ui.read
 
-enum class Difficulty(val label: String) {
-    EASY("Easy"),
-    MEDIUM("Medium"),
-    HARD("Hard")
+import androidx.annotation.StringRes
+import com.alan.axolotl.R
+
+enum class Difficulty(@StringRes val labelRes: Int) {
+    EASY(R.string.read_level_easy),
+    MEDIUM(R.string.read_level_medium),
+    HARD(R.string.read_level_hard)
 }
 
 data class SentenceLevel(

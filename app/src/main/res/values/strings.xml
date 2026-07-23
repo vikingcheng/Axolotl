@@ -1,3 +1,116 @@
 <resources>
     <string name="app_name">Axolotl</string>
+
+    <!-- Home -->
+    <string name="home_greeting">Hi Alan!</string>
+    <string name="home_prompt">What do you want to do today?</string>
+
+    <!-- Navigation destinations -->
+    <string name="destination_home">Home</string>
+    <string name="destination_timer">Timer</string>
+    <string name="destination_books">Books</string>
+    <string name="destination_countries">Countries</string>
+    <string name="destination_word_search">Word Search</string>
+    <string name="destination_read">Read</string>
+    <string name="drawer_profile">Profile</string>
+    <string name="menu">Menu</string>
+
+    <!-- Timer -->
+    <string name="timer_how_many_minutes">How many minutes?</string>
+    <string name="timer_minutes">minutes</string>
+    <string name="timer_remaining">remaining</string>
+    <string name="timer_start">Start!</string>
+    <string name="timer_stop">Stop</string>
+    <string name="timer_decrease">Decrease</string>
+    <string name="timer_increase">Increase</string>
+
+    <!-- Timer service notification -->
+    <string name="timer_notification_title">Axolotl Timer</string>
+    <string name="timer_notification_text">Time remaining: %1$s</string>
+    <string name="timer_channel_name">Timer</string>
+    <string name="timer_channel_description">Shows countdown timer progress</string>
+
+    <!-- Countries -->
+    <string name="countries_question_flag">Which country is this?</string>
+    <string name="countries_question_continent">Which continent is this country in?</string>
+    <string name="countries_next">Next ➡️</string>
+    <string name="countries_answered">Answered: %1$d</string>
+    <string name="countries_correct">Correct: %1$d</string>
+    <string name="countries_reset">Reset</string>
+    <string name="countries_say_question">Say the question</string>
+    <string name="countries_say_country">Say this country name</string>
+
+    <!-- Word search -->
+    <string name="word_search_title">🔍 Find the Words!</string>
+    <string name="word_search_words_to_find">Words to find:</string>
+    <string name="word_search_clear_selection">❌ Clear Selection</string>
+    <string name="word_search_all_found">🎉 Great job, Alan! All words found!</string>
+    <string name="word_search_next">Next ➡️</string>
+
+    <!-- Books list -->
+    <string name="books_title">📚 My Books</string>
+    <string name="books_empty">No books yet!</string>
+
+    <!-- Book reader -->
+    <string name="book_reader_could_not_open">Could not open book</string>
+    <string name="book_reader_back">Back</string>
+    <string name="book_reader_zoom_in">Zoom in</string>
+    <string name="book_reader_zoom_out">Zoom out</string>
+    <string name="book_reader_page_description">Book page %1$d</string>
+    <string name="book_reader_speaking_page">Speaking this page</string>
+    <string name="book_reader_stop_reading">Stop reading</string>
+    <string name="book_reader_read_this_page">Read this page</string>
+    <string name="book_reader_tts_loading">Text-to-speech is still loading…</string>
+    <string name="book_reader_scanning">Scanning page for text…</string>
+    <string name="book_reader_no_text">No readable text found on this page</string>
+    <string name="book_reader_page_unavailable">Page not available</string>
+    <string name="book_reader_read_failed">Could not read text from this page</string>
+
+    <!-- Read (speech practice) -->
+    <string name="read_tap_word_hint">Tap a word to hear it 🔊</string>
+    <string name="read_speech_unavailable">Speech recognition is not available on this device.</string>
+    <string name="read_allow_microphone">Allow Microphone</string>
+    <string name="read_listening">Listening… 👂</string>
+    <string name="read_level">Level:</string>
+    <string name="read_level_easy">Easy</string>
+    <string name="read_level_medium">Medium</string>
+    <string name="read_level_hard">Hard</string>
+    <string name="read_try_again">Try Again</string>
+    <string name="read_next">Next</string>
+    <string name="read_stop_listening">Stop listening</string>
+    <string name="read_start_reading">Start reading</string>
+    <string name="read_what_i_heard">What I heard:</string>
+    <string name="read_words_correct">%1$d / %2$d words correct</string>
+    <string name="read_result_amazing">Amazing! Perfect! 🌟</string>
+    <string name="read_result_great">Great job! 🎉</string>
+    <string name="read_result_good">Good reading! 👍</string>
+    <string name="read_result_nice">Nice try! Keep going! 💪</string>
+    <string name="read_result_effort">Good effort! Try again? 😊</string>
+    <string name="read_result_try_again">Let\'s try again! You can do it! 👋</string>
+    <string name="read_error_no_match">I didn\'t hear anything. Try again!</string>
+    <string name="read_error_audio">Microphone problem. Try again!</string>
+    <string name="read_error_network">Network issue. Try again!</string>
+    <string name="read_error_generic">Something went wrong. Try again!</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_current_password">Current Password</string>
+    <string name="profile_new_password">New Password (4 digits)</string>
+    <string name="profile_save">Save</string>
+    <string name="profile_password_updated">Password updated!</string>
+    <string name="profile_password_invalid">Password must be exactly 4 digits</string>
+
+    <!-- Password gate -->
+    <string name="password_gate_title">Enter Password</string>
+    <string name="password_gate_enter">Enter</string>
+    <string name="password_gate_wrong">Password is wrong</string>
+
+    <!-- Lock screen -->
+    <string name="lock_rest">Alan, have a rest!</string>
+    <string name="lock_break">Time\'s up! Take a break from the screen.</string>
+    <string name="lock_parent_unlock">🔐 Parent Unlock</string>
+    <string name="lock_problem">%1$d × %2$d = ?</string>
+    <string name="lock_answer_placeholder">Answer</string>
+    <string name="lock_unlock">Unlock</string>
+    <string name="lock_wrong_answer">❌ Wrong answer, try again!</string>
 </resources>

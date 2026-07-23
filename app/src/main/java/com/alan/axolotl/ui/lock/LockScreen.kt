@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,6 +55,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.alan.axolotl.R
 
 @Composable
 fun LockScreen(
@@ -116,7 +118,7 @@ fun LockScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Alan, have a rest!",
+                text = stringResource(R.string.lock_rest),
                 style = MaterialTheme.typography.headlineLarge.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -125,7 +127,7 @@ fun LockScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Time's up! Take a break from the screen.",
+                text = stringResource(R.string.lock_break),
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White.copy(alpha = 0.7f),
                 textAlign = TextAlign.Center
@@ -144,13 +146,13 @@ fun LockScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "\uD83D\uDD10 Parent Unlock",
+                        text = stringResource(R.string.lock_parent_unlock),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.6f)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "${uiState.num1} × ${uiState.num2} = ?",
+                        text = stringResource(R.string.lock_problem, uiState.num1, uiState.num2),
                         style = MaterialTheme.typography.headlineLarge.copy(
                             fontSize = 36.sp,
                             fontWeight = FontWeight.Bold
@@ -168,7 +170,7 @@ fun LockScreen(
                             onValueChange = { viewModel.onInputChanged(it) },
                             modifier = Modifier.width(140.dp),
                             placeholder = {
-                                Text("Answer", color = Color.White.copy(alpha = 0.4f))
+                                Text(stringResource(R.string.lock_answer_placeholder), color = Color.White.copy(alpha = 0.4f))
                             },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,
@@ -206,7 +208,7 @@ fun LockScreen(
                         ) {
                             Icon(
                                 Icons.Filled.LockOpen,
-                                contentDescription = "Unlock",
+                                contentDescription = stringResource(R.string.lock_unlock),
                                 tint = Color.White
                             )
                         }
@@ -217,7 +219,7 @@ fun LockScreen(
                         exit = fadeOut()
                     ) {
                         Text(
-                            text = "\u274C Wrong answer, try again!",
+                            text = stringResource(R.string.lock_wrong_answer),
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color(0xFFFF5252),
                             modifier = Modifier.padding(top = 8.dp)

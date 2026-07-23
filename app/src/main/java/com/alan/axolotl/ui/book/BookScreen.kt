@@ -27,8 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.alan.axolotl.R
 
 data class BookItem(
     val fileName: String,
@@ -59,7 +61,7 @@ fun BookScreen(
             .padding(top = 16.dp)
     ) {
         Text(
-            text = "📚 My Books",
+            text = stringResource(R.string.books_title),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(horizontal = 24.dp)
@@ -78,7 +80,7 @@ fun BookScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "No books yet!",
+                    text = stringResource(R.string.books_empty),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
