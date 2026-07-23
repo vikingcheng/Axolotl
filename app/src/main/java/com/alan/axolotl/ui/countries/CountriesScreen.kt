@@ -65,7 +65,10 @@ fun CountriesScreen(
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.clickable(
+                    onClickLabel = "Say the question"
+                ) { viewModel.speak(uiState.questionText) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -128,15 +131,15 @@ private fun ScoreBoard(
     ) {
         Text(
             text = "Answered: $answeredCount",
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
             text = "Correct: $correctCount",
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         TextButton(
             onClick = onReset,
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
@@ -144,12 +147,12 @@ private fun ScoreBoard(
             Icon(
                 imageVector = Icons.Filled.Refresh,
                 contentDescription = null,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = "Reset",
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.titleMedium
             )
         }
     }

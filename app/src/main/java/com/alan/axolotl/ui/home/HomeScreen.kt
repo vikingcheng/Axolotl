@@ -13,12 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.MenuBook
-import androidx.compose.material.icons.filled.GridOn
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.Public
-import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -28,66 +22,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-
-data class HomeItem(
-    val label: String,
-    val icon: ImageVector,
-    val containerColor: @Composable () -> Color,
-    val contentColor: @Composable () -> Color,
-    val onClick: () -> Unit
-)
+import com.alan.axolotl.navigation.DestinationAccent
+import com.alan.axolotl.navigation.TopLevelDestination
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(
-    onNavigateToTimer: () -> Unit,
-    onNavigateToBooks: () -> Unit,
-    onNavigateToCountries: () -> Unit,
-    onNavigateToWordSearch: () -> Unit,
-    onNavigateToRead: () -> Unit,
+    onFeatureClick: (TopLevelDestination) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val items = listOf(
-        HomeItem(
-            label = "Timer",
-            icon = Icons.Filled.Timer,
-            containerColor = { MaterialTheme.colorScheme.primaryContainer },
-            contentColor = { MaterialTheme.colorScheme.onPrimaryContainer },
-            onClick = onNavigateToTimer
-        ),
-        HomeItem(
-            label = "Books",
-            icon = Icons.AutoMirrored.Filled.MenuBook,
-            containerColor = { MaterialTheme.colorScheme.secondaryContainer },
-            contentColor = { MaterialTheme.colorScheme.onSecondaryContainer },
-            onClick = onNavigateToBooks
-        ),
-        HomeItem(
-            label = "Countries",
-            icon = Icons.Filled.Public,
-            containerColor = { MaterialTheme.colorScheme.tertiaryContainer },
-            contentColor = { MaterialTheme.colorScheme.onTertiaryContainer },
-            onClick = onNavigateToCountries
-        ),
-        HomeItem(
-            label = "Word Search",
-            icon = Icons.Filled.GridOn,
-            containerColor = { MaterialTheme.colorScheme.primaryContainer },
-            contentColor = { MaterialTheme.colorScheme.onPrimaryContainer },
-            onClick = onNavigateToWordSearch
-        ),
-        HomeItem(
-            label = "Read",
-            icon = Icons.Filled.Mic,
-            containerColor = { MaterialTheme.colorScheme.secondaryContainer },
-            contentColor = { MaterialTheme.colorScheme.onSecondaryContainer },
-            onClick = onNavigateToRead
-        )
-    )
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -97,7 +42,7 @@ fun HomeScreen(
     ) {
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "\uD83E\uDD8E",
+            text = "🦎",
             style = MaterialTheme.typography.displayLarge
         )
         Spacer(modifier = Modifier.height(12.dp))
@@ -120,8 +65,11 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             maxItemsInEachRow = 5
         ) {
-            items.forEach { item ->
-                HomeItemButton(item = item)
+            TopLevelDestination.homeFeatures.forEach { feature ->
+                FeatureTile(
+                    feature = feature,
+                    onClick = { onFeatureClick(feature) }
+                )
             }
         }
 
@@ -130,16 +78,19 @@ fun HomeScreen(
 }
 
 @Composable
-private fun HomeItemButton(item: HomeItem) {
+private fun FeatureTile(
+    feature: TopLevelDestination,
+    onClick: () -> Unit
+) {
     Button(
-        onClick = item.onClick,
+        onClick = onClick,
         modifier = Modifier
             .width(140.dp)
             .height(100.dp),
         shape = RoundedCornerShape(20.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = item.containerColor(),
-            contentColor = item.contentColor()
+            containerColor = tileContainerColor(feature.accent),
+            contentColor = tileContentColor(feature.accent)
         ),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
     ) {
@@ -148,16 +99,30 @@ private fun HomeItemButton(item: HomeItem) {
             verticalArrangement = Arrangement.Center
         ) {
             Icon(
-                imageVector = item.icon,
+                imageVector = feature.selectedIcon,
                 contentDescription = null,
                 modifier = Modifier.size(32.dp)
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = item.label,
+                text = feature.label,
                 style = MaterialTheme.typography.labelLarge,
                 textAlign = TextAlign.Center
             )
         }
     }
+}
+
+@Composable
+private fun tileContainerColor(accent: DestinationAccent): Color = when (accent) {
+    DestinationAccent.PRIMARY -> MaterialTheme.colorScheme.primaryContainer
+    DestinationAccent.SECONDARY -> MaterialTheme.colorScheme.secondaryContainer
+    DestinationAccent.TERTIARY -> MaterialTheme.colorScheme.tertiaryContainer
+}
+
+@Composable
+private fun tileContentColor(accent: DestinationAccent): Color = when (accent) {
+    DestinationAccent.PRIMARY -> MaterialTheme.colorScheme.onPrimaryContainer
+    DestinationAccent.SECONDARY -> MaterialTheme.colorScheme.onSecondaryContainer
+    DestinationAccent.TERTIARY -> MaterialTheme.colorScheme.onTertiaryContainer
 }

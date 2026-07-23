@@ -113,18 +113,16 @@ class CountriesViewModel @Inject constructor(
     /**
      * Handles a tap on an answer button.
      *
-     * When the options are country names they are always read aloud, even after
-     * the question is locked. Scoring, in contrast, only happens on the first
-     * tap: once [CountriesUiState.answered] is true the revealed colours stay
-     * put no matter how many more times the buttons are pressed.
+     * The option label is always read aloud — for both country and continent
+     * answers, and even after the question is locked. Scoring, in contrast, only
+     * happens on the first tap: once [CountriesUiState.answered] is true the
+     * revealed colours stay put no matter how many more times a button is pressed.
      */
     fun onOptionTapped(index: Int) {
         val state = _uiState.value
         val chosen = state.options.getOrNull(index) ?: return
 
-        if (state.questionType == QuestionType.FLAG_TO_COUNTRY) {
-            speechPlayer.speak(chosen.label)
-        }
+        speechPlayer.speak(chosen.label)
 
         if (state.answered) return
 
@@ -140,12 +138,20 @@ class CountriesViewModel @Inject constructor(
         }
     }
 
-    /** Reads the country name in the question aloud (continent questions only). */
+    /**
+     * Reads the question prompt aloud. Only the country-name prompt is spoken —
+     * the flag prompt is an emoji with nothing meaningful to pronounce.
+     */
     fun onPromptTapped() {
         val state = _uiState.value
         if (state.questionType == QuestionType.COUNTRY_TO_CONTINENT) {
             speechPlayer.speak(state.promptName)
         }
+    }
+
+    /** Reads an arbitrary piece of on-screen text aloud (e.g. the question line). */
+    fun speak(text: String) {
+        speechPlayer.speak(text)
     }
 
     /** Clears the running score without disturbing the current question. */

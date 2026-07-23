@@ -31,6 +31,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -61,6 +63,31 @@ import com.alan.axolotl.ui.timer.TimerScreen
 import com.alan.axolotl.ui.wordsearch.WordSearchScreen
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+
+/**
+ * Where a feature actually navigates to. Timer is gated behind the parental
+ * password screen, everything else goes straight to its own route.
+ */
+private val TopLevelDestination.navigationRoute: Any
+    get() = if (this == TopLevelDestination.TIMER) PasswordGateRoute else route
+
+/** Standard top-level navigation: reset to the start destination, keeping saved state. */
+private fun NavController.navigateToTab(route: Any) {
+    navigate(route) {
+        popUpTo(graph.findStartDestination().id) { saveState = true }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
+
+/** True when [destination] is the tab currently being shown. */
+private fun NavDestination?.isCurrentTab(destination: TopLevelDestination): Boolean =
+    if (destination == TopLevelDestination.TIMER) {
+        // The password gate counts as "on the Timer tab" so the highlight doesn't flicker.
+        this?.hasRoute<TimerRoute>() == true || this?.hasRoute<PasswordGateRoute>() == true
+    } else {
+        this?.hasRoute(destination.route::class) == true
+    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,12 +132,7 @@ fun AxolotlApp(
                     modifier = Modifier.padding(28.dp)
                 )
                 TopLevelDestination.entries.forEach { destination ->
-                    val selected = if (destination == TopLevelDestination.TIMER) {
-                        currentDestination?.hasRoute<TimerRoute>() == true ||
-                            currentDestination?.hasRoute<PasswordGateRoute>() == true
-                    } else {
-                        currentDestination?.hasRoute(destination.route::class) == true
-                    }
+                    val selected = currentDestination.isCurrentTab(destination)
                     NavigationDrawerItem(
                         icon = {
                             Icon(
@@ -127,18 +149,7 @@ fun AxolotlApp(
                         selected = selected,
                         onClick = {
                             scope.launch { drawerState.close() }
-                            val route: Any = if (destination == TopLevelDestination.TIMER) {
-                                PasswordGateRoute
-                            } else {
-                                destination.route
-                            }
-                            navController.navigate(route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
+                            navController.navigateToTab(destination.navigationRoute)
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )
@@ -163,13 +174,7 @@ fun AxolotlApp(
                     selected = profileSelected,
                     onClick = {
                         scope.launch { drawerState.close() }
-                        navController.navigate(ProfileRoute) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        navController.navigateToTab(ProfileRoute)
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
@@ -214,27 +219,11 @@ fun AxolotlApp(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         TopLevelDestination.entries.forEach { destination ->
-                            val selected = if (destination == TopLevelDestination.TIMER) {
-                                currentDestination?.hasRoute<TimerRoute>() == true ||
-                                    currentDestination?.hasRoute<PasswordGateRoute>() == true
-                            } else {
-                                currentDestination?.hasRoute(destination.route::class) == true
-                            }
+                            val selected = currentDestination.isCurrentTab(destination)
                             NavigationBarItem(
                                 selected = selected,
                                 onClick = {
-                                    val route: Any = if (destination == TopLevelDestination.TIMER) {
-                                        PasswordGateRoute
-                                    } else {
-                                        destination.route
-                                    }
-                                    navController.navigate(route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
+                                    navController.navigateToTab(destination.navigationRoute)
                                 },
                                 icon = {
                                     Icon(
@@ -256,50 +245,8 @@ fun AxolotlApp(
             ) {
                 composable<HomeRoute> {
                     HomeScreen(
-                        onNavigateToTimer = {
-                            navController.navigate(PasswordGateRoute) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        onNavigateToBooks = {
-                            navController.navigate(BookRoute) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        onNavigateToCountries = {
-                            navController.navigate(CountriesRoute) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        onNavigateToWordSearch = {
-                            navController.navigate(WordSearchRoute) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        onNavigateToRead = {
-                            navController.navigate(ReadRoute) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
+                        onFeatureClick = { feature ->
+                            navController.navigateToTab(feature.navigationRoute)
                         }
                     )
                 }
