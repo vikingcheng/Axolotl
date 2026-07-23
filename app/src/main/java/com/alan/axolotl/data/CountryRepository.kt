@@ -1,7 +1,5 @@
 package com.alan.axolotl.data
 
-import com.alan.axolotl.ui.countries.Country
-import com.alan.axolotl.ui.countries.allCountries
 import javax.inject.Inject
 
 /**

@@ -2,6 +2,7 @@ package com.alan.axolotl.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.alan.axolotl.data.AndroidSpeechPlayer
 import com.alan.axolotl.data.BookRepository
 import com.alan.axolotl.data.CountryRepository
 import com.alan.axolotl.data.DefaultCountryRepository
@@ -11,6 +12,7 @@ import com.alan.axolotl.data.DefaultWordRepository
 import com.alan.axolotl.data.PdfBookRepository
 import com.alan.axolotl.data.SentenceRepository
 import com.alan.axolotl.data.SettingsRepository
+import com.alan.axolotl.data.SpeechPlayer
 import com.alan.axolotl.data.WordRepository
 import dagger.Binds
 import dagger.Module
@@ -52,6 +54,14 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindBookRepository(impl: PdfBookRepository): BookRepository
+
+    /**
+     * Deliberately unscoped: each ViewModel gets its own speech engine and
+     * releases it in `onCleared()`, so no TTS service connection is held open
+     * for the whole app lifetime.
+     */
+    @Binds
+    abstract fun bindSpeechPlayer(impl: AndroidSpeechPlayer): SpeechPlayer
 
     companion object {
         @Provides
